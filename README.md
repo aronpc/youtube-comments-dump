@@ -49,6 +49,30 @@ php bin/console youtube:fetch-comments dQw4w9WgXcQ
 
 This will generate a file in the `output` directory named `comments_VIDEO_ID.txt` containing all the comments from the video.
 
+### Fetch Live Chat
+
+To fetch live chat from a YouTube video that had a live stream, use:
+
+```bash
+php bin/console youtube:fetch-livechat VIDEO_ID
+```
+
+This will generate a file in the `output` directory named `livechat_VIDEO_ID.txt` containing all the live chat messages from the video.
+
+### Fetch Both Comments and Live Chat
+
+To fetch both comments and live chat in a single operation, use:
+
+```bash
+php bin/console youtube:fetch-all VIDEO_ID
+```
+
+This will generate two files in the `output` directory:
+- `comments_VIDEO_ID.txt` containing all the comments
+- `livechat_VIDEO_ID.txt` containing all the live chat messages
+
+If either comments or live chat are not available for the video, the command will still succeed but will display a warning message.
+
 ### Download Comments Only
 
 If you want to only download the comments and save them as a JSON file (useful for debugging), use:

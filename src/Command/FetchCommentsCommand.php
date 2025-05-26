@@ -18,7 +18,7 @@ class FetchCommentsCommand extends Command
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct('youtube:fetch-comments');
         $this->youtubeClient = new YouTubeClient();
     }
 

@@ -18,7 +18,7 @@ class DownloadCommentsCommand extends Command
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct('youtube:download-comments');
         $this->youtubeClient = new YouTubeClient();
     }
 

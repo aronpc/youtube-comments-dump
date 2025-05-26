@@ -4,8 +4,20 @@
 require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use App\Command\FetchCommentsCommand;
 
 $application = new Application('YouTube Comments Dump', '1.0.0');
-$application->add(new FetchCommentsCommand());
+
+// Register commands
+$commands = [
+    new App\Command\FetchCommentsCommand(),
+    new App\Command\FetchLiveChatCommand(),
+    new App\Command\FetchAllCommand(),
+    new App\Command\DownloadCommentsCommand(),
+    new App\Command\ParseCommentsCommand(),
+];
+
+foreach ($commands as $command) {
+    $application->add($command);
+}
+
 $application->run();

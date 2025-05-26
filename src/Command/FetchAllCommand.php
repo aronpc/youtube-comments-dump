@@ -9,26 +9,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ParseCommentsCommand extends Command
+class FetchAllCommand extends Command
 {
-    protected static $defaultName = 'youtube:parse-comments';
-    protected static $defaultDescription = 'Parse downloaded YouTube comments from a JSON file and save them to a text file';
+    protected static $defaultName = 'youtube:fetch-all';
+    protected static $defaultDescription = 'Fetch both comments and live chat from a YouTube video and save them to separate text files';
 
     private YouTubeClient $youtubeClient;
-    private string $outputDir;
 
     public function __construct()
     {
-        parent::__construct('youtube:parse-comments');
+        parent::__construct('youtube:fetch-all');
         $this->youtubeClient = new YouTubeClient();
-        $this->outputDir = dirname(__DIR__, 2) . '/output';
     }
 
     protected function configure(): void
     {
         $this
             ->addArgument('videoId', InputArgument::REQUIRED, 'The YouTube video ID')
-            ->setHelp('This command allows you to parse downloaded YouTube comments from a JSON file and save them to a text file.');
+            ->setHelp('This command allows you to fetch both comments and live chat from a YouTube video and save them to separate text files.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -46,20 +44,24 @@ class ParseCommentsCommand extends Command
             return Command::FAILURE;
         }
 
-        $jsonFile = $this->outputDir . "/comments_{$videoId}.json";
-
-        if (!file_exists($jsonFile)) {
-            $io->error("Comments JSON file not found: $jsonFile");
-            $io->note("Please download comments first using the 'youtube:download-comments' command.");
-            return Command::FAILURE;
-        }
-
-        $io->title('YouTube Comments Parser');
-        $io->text("Parsing comments for video ID: $videoId");
+        $io->title('YouTube Comments and Live Chat Dump');
+        $io->text("Fetching comments and live chat for video ID: $videoId");
 
         try {
-            $outputFile = $this->youtubeClient->parseComments($videoId, $jsonFile);
-            $io->success("Comments parsed and saved to: $outputFile");
+            $results = $this->youtubeClient->fetchCommentsAndLiveChat($videoId);
+
+            if ($results['comments']) {
+                $io->success("Comments saved to: " . $results['comments']);
+            } else {
+                $io->warning("Could not fetch comments for this video.");
+            }
+
+            if ($results['livechat']) {
+                $io->success("Live chat saved to: " . $results['livechat']);
+            } else {
+                $io->warning("Could not fetch live chat for this video.");
+            }
+
             return Command::SUCCESS;
         } catch (\Exception $e) {
             $io->error('Error: ' . $e->getMessage());
