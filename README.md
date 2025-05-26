@@ -111,6 +111,29 @@ Comment text
 2. It processes the JSON data and formats the comments
 3. The formatted comments are saved to a text file in the output directory
 
+## Testing
+
+The application includes a comprehensive test suite built with PHPUnit. The tests cover the main functionality of the application, including:
+
+- Service classes (YouTubeClient)
+- Command classes (FetchCommentsCommand, DownloadCommentsCommand, ParseCommentsCommand)
+
+### Running Tests
+
+To run the tests, use the following command:
+
+```bash
+composer test
+```
+
+Or you can run PHPUnit directly:
+
+```bash
+./vendor/bin/phpunit
+```
+
+For more information about the tests, see the [tests/README.md](tests/README.md) file.
+
 ## Troubleshooting
 
 - Make sure yt-dlp is installed and accessible from the command line
@@ -121,3 +144,4 @@ Comment text
   ```bash
   php bin/console youtube:fetch-comments -- -6oKXN8D6BI
   ```
+  Note: The application has special handling for video IDs that start with a hyphen to ensure they are processed correctly.

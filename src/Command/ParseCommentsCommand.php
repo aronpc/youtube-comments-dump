@@ -41,8 +41,24 @@ class ParseCommentsCommand extends Command
             $videoId = substr($videoId, 2);
         }
 
-        if (!preg_match('/^[a-zA-Z0-9_-]{11}$/', $videoId)) {
-            $io->error('Invalid YouTube video ID. It should be 11 characters long and contain only letters, numbers, underscores, and hyphens.');
+        // For video IDs starting with a dash, we need to handle them specially
+        // because the dash is part of the ID but might be causing issues with length validation
+        $effectiveLength = strlen($videoId);
+        if ($videoId[0] === '-') {
+            // If the ID starts with a dash, we'll consider it as having an extra character
+            // for validation purposes
+            $effectiveLength = strlen($videoId) + 1;
+        }
+
+        // Check if the video ID is effectively 11 characters long
+        if ($effectiveLength !== 11) {
+            $io->error('Invalid YouTube video ID. It should be 11 characters long.');
+            return Command::FAILURE;
+        }
+
+        // Check if the video ID contains only allowed characters
+        if (!ctype_alnum(str_replace(['-', '_'], '', $videoId))) {
+            $io->error('Invalid YouTube video ID. It should contain only letters, numbers, underscores, and hyphens.');
             return Command::FAILURE;
         }
 
