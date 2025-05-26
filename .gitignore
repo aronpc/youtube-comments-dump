@@ -1,0 +1,9 @@
+/vendor/
+/output/*.txt
+.env
+.env.local
+.env.*.local
+.phpunit.result.cache
+/composer.lock
+/.idea/
+/.vscode/
