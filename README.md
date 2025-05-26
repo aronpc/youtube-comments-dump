@@ -33,7 +33,9 @@ A PHP application to download YouTube comments without using API keys, utilizing
 
 ## Usage
 
-To fetch comments from a YouTube video, use the following command:
+### Fetch Comments (All-in-one)
+
+To fetch comments from a YouTube video in a single step (download and parse), use the following command:
 
 ```bash
 php bin/console youtube:fetch-comments VIDEO_ID
@@ -45,7 +47,31 @@ Replace `VIDEO_ID` with the ID of the YouTube video. For example:
 php bin/console youtube:fetch-comments dQw4w9WgXcQ
 ```
 
-This will generate a file in the `output` directory named `comments_VIDEO_ID.txt` containing all the comments from the video in the following format:
+This will generate a file in the `output` directory named `comments_VIDEO_ID.txt` containing all the comments from the video.
+
+### Download Comments Only
+
+If you want to only download the comments and save them as a JSON file (useful for debugging), use:
+
+```bash
+php bin/console youtube:download-comments VIDEO_ID
+```
+
+This will generate a file in the `output` directory named `comments_VIDEO_ID.json` containing the raw JSON data.
+
+### Parse Comments Only
+
+To parse previously downloaded comments from a JSON file, use:
+
+```bash
+php bin/console youtube:parse-comments VIDEO_ID
+```
+
+This command expects a file named `comments_VIDEO_ID.json` to exist in the `output` directory.
+
+### Output Format
+
+The parsed comments are saved in a text file with the following format:
 
 ```
 Author:
@@ -67,3 +93,7 @@ Comment text
 - Some videos may have comments disabled, in which case no comments will be downloaded
 - Future live events that haven't started yet don't have comments available
 - If you encounter any issues, try updating yt-dlp to the latest version
+- For video IDs that start with a hyphen (e.g., -6oKXN8D6BI), you need to use the `--` separator to prevent the shell from interpreting the ID as a command option:
+  ```bash
+  php bin/console youtube:fetch-comments -- -6oKXN8D6BI
+  ```

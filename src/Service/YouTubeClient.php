@@ -29,7 +29,19 @@ class YouTubeClient
      */
     public function fetchComments(string $videoId): string
     {
-        $outputFile = $this->outputDir . "/comments_{$videoId}.txt";
+        $jsonFile = $this->downloadComments($videoId);
+        return $this->parseComments($videoId, $jsonFile);
+    }
+
+    /**
+     * Download comments from a YouTube video and save them to a JSON file
+     *
+     * @param string $videoId The YouTube video ID
+     * @return string The path to the JSON file containing the comments
+     * @throws \Exception If the process fails
+     */
+    public function downloadComments(string $videoId): string
+    {
         $tempJsonFile = sys_get_temp_dir() . "/{$videoId}.comments.json";
 
         // Build the yt-dlp command
@@ -71,8 +83,34 @@ class YouTubeClient
                 throw new \Exception("Failed to download comments. The video might not have any comments or they might be disabled.");
             }
 
+            // Save the JSON file to the output directory for persistence
+            $outputJsonFile = $this->outputDir . "/comments_{$videoId}.json";
+            copy($commentsJsonFile, $outputJsonFile);
+
+            // Return the path to the JSON file
+            return $outputJsonFile;
+        } catch (ProcessFailedException $exception) {
+            throw new \Exception("Failed to execute yt-dlp: " . $exception->getMessage());
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * Parse a JSON file containing comments and save them to a text file
+     *
+     * @param string $videoId The YouTube video ID
+     * @param string $jsonFile The path to the JSON file containing the comments
+     * @return string The path to the output text file
+     * @throws \Exception If the process fails
+     */
+    public function parseComments(string $videoId, string $jsonFile): string
+    {
+        $outputFile = $this->outputDir . "/comments_{$videoId}.txt";
+
+        try {
             // Parse the JSON file
-            $commentsData = json_decode(file_get_contents($commentsJsonFile), true);
+            $commentsData = json_decode(file_get_contents($jsonFile), true);
 
             if (!isset($commentsData['comments'])) {
                 throw new \Exception("No comments found in the downloaded data.");
@@ -81,12 +119,7 @@ class YouTubeClient
             // Format and save the comments
             $this->formatAndSaveComments($commentsData['comments'], $outputFile);
 
-            // Clean up the temporary file
-            @unlink($commentsJsonFile);
-
             return $outputFile;
-        } catch (ProcessFailedException $exception) {
-            throw new \Exception("Failed to execute yt-dlp: " . $exception->getMessage());
         } catch (\Exception $exception) {
             throw $exception;
         }

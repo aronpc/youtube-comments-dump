@@ -9,10 +9,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class FetchCommentsCommand extends Command
+class DownloadCommentsCommand extends Command
 {
-    protected static $defaultName = 'youtube:fetch-comments';
-    protected static $defaultDescription = 'Fetch comments from a YouTube video and save them to a text file';
+    protected static $defaultName = 'youtube:download-comments';
+    protected static $defaultDescription = 'Download comments from a YouTube video and save them to a JSON file';
 
     private YouTubeClient $youtubeClient;
 
@@ -26,7 +26,7 @@ class FetchCommentsCommand extends Command
     {
         $this
             ->addArgument('videoId', InputArgument::REQUIRED, 'The YouTube video ID')
-            ->setHelp('This command allows you to fetch comments from a YouTube video and save them to a text file.');
+            ->setHelp('This command allows you to download comments from a YouTube video and save them to a JSON file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -44,12 +44,12 @@ class FetchCommentsCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->title('YouTube Comments Dump');
-        $io->text("Fetching comments for video ID: $videoId");
+        $io->title('YouTube Comments Download');
+        $io->text("Downloading comments for video ID: $videoId");
 
         try {
-            $outputFile = $this->youtubeClient->fetchComments($videoId);
-            $io->success("Comments saved to: $outputFile");
+            $outputFile = $this->youtubeClient->downloadComments($videoId);
+            $io->success("Comments downloaded and saved to: $outputFile");
             return Command::SUCCESS;
         } catch (\Exception $e) {
             $io->error('Error: ' . $e->getMessage());
