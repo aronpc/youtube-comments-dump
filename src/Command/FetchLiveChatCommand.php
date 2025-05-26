@@ -3,23 +3,19 @@
 namespace App\Command;
 
 use App\Service\YouTubeClient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'youtube:fetch-livechat', description: 'Fetch live chat from a YouTube video and save it to a text file')]
 class FetchLiveChatCommand extends Command
 {
-    protected static $defaultName = 'youtube:fetch-livechat';
-    protected static $defaultDescription = 'Fetch live chat from a YouTube video and save it to a text file';
-
-    private YouTubeClient $youtubeClient;
-
-    public function __construct()
+    public function __construct(private YouTubeClient $youtubeClient = new YouTubeClient)
     {
         parent::__construct('youtube:fetch-livechat');
-        $this->youtubeClient = new YouTubeClient();
     }
 
     protected function configure(): void

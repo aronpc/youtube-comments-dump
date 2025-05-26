@@ -26,19 +26,8 @@ class ParseCommentsCommandTest extends TestCase
         // Create a mock YouTubeClient
         $this->youtubeClient = $this->createMock(YouTubeClient::class);
 
-        // Create a new ParseCommentsCommand
-        $command = new ParseCommentsCommand();
-
-        // Use reflection to replace the YouTubeClient with our mock
-        $reflectionClass = new \ReflectionClass(ParseCommentsCommand::class);
-        $youtubeClientProperty = $reflectionClass->getProperty('youtubeClient');
-        $youtubeClientProperty->setAccessible(true);
-        $youtubeClientProperty->setValue($command, $this->youtubeClient);
-
-        // Use reflection to replace the outputDir with our test directory
-        $outputDirProperty = $reflectionClass->getProperty('outputDir');
-        $outputDirProperty->setAccessible(true);
-        $outputDirProperty->setValue($command, $this->testOutputDir);
+        // Create a new ParseCommentsCommand with our mock and test output directory
+        $command = new ParseCommentsCommand($this->youtubeClient, $this->testOutputDir);
 
         // Create a new Application and add the command
         $application = new Application();

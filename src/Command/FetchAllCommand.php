@@ -3,23 +3,19 @@
 namespace App\Command;
 
 use App\Service\YouTubeClient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'youtube:fetch-all', description: 'Fetch both comments and live chat from a YouTube video and save them to separate text files')]
 class FetchAllCommand extends Command
 {
-    protected static $defaultName = 'youtube:fetch-all';
-    protected static $defaultDescription = 'Fetch both comments and live chat from a YouTube video and save them to separate text files';
-
-    private YouTubeClient $youtubeClient;
-
-    public function __construct()
+    public function __construct(private YouTubeClient $youtubeClient = new YouTubeClient)
     {
         parent::__construct('youtube:fetch-all');
-        $this->youtubeClient = new YouTubeClient();
     }
 
     protected function configure(): void

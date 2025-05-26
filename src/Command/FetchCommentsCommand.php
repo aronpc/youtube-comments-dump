@@ -3,23 +3,19 @@
 namespace App\Command;
 
 use App\Service\YouTubeClient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'youtube:fetch-comments', description: 'Fetch comments from a YouTube video and save them to a text file')]
 class FetchCommentsCommand extends Command
 {
-    protected static $defaultName = 'youtube:fetch-comments';
-    protected static $defaultDescription = 'Fetch comments from a YouTube video and save them to a text file';
-
-    private YouTubeClient $youtubeClient;
-
-    public function __construct()
+    public function __construct(private YouTubeClient $youtubeClient = new YouTubeClient)
     {
         parent::__construct('youtube:fetch-comments');
-        $this->youtubeClient = new YouTubeClient();
     }
 
     protected function configure(): void

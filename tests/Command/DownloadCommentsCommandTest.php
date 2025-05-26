@@ -20,14 +20,8 @@ class DownloadCommentsCommandTest extends TestCase
         // Create a mock YouTubeClient
         $this->youtubeClient = $this->createMock(YouTubeClient::class);
 
-        // Create a new DownloadCommentsCommand
-        $command = new DownloadCommentsCommand();
-
-        // Use reflection to replace the YouTubeClient with our mock
-        $reflectionClass = new \ReflectionClass(DownloadCommentsCommand::class);
-        $reflectionProperty = $reflectionClass->getProperty('youtubeClient');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($command, $this->youtubeClient);
+        // Create a new DownloadCommentsCommand with our mock
+        $command = new DownloadCommentsCommand($this->youtubeClient);
 
         // Create a new Application and add the command
         $application = new Application();

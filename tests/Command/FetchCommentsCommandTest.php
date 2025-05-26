@@ -20,14 +20,8 @@ class FetchCommentsCommandTest extends TestCase
         // Create a mock YouTubeClient
         $this->youtubeClient = $this->createMock(YouTubeClient::class);
 
-        // Create a new FetchCommentsCommand
-        $command = new FetchCommentsCommand();
-
-        // Use reflection to replace the YouTubeClient with our mock
-        $reflectionClass = new \ReflectionClass(FetchCommentsCommand::class);
-        $reflectionProperty = $reflectionClass->getProperty('youtubeClient');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($command, $this->youtubeClient);
+        // Create a new FetchCommentsCommand with our mock
+        $command = new FetchCommentsCommand($this->youtubeClient);
 
         // Create a new Application and add the command
         $application = new Application();

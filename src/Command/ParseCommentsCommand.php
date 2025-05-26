@@ -3,25 +3,23 @@
 namespace App\Command;
 
 use App\Service\YouTubeClient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'youtube:parse-comments', description: 'Parse downloaded YouTube comments from a JSON file and save them to a text file')]
 class ParseCommentsCommand extends Command
 {
-    protected static $defaultName = 'youtube:parse-comments';
-    protected static $defaultDescription = 'Parse downloaded YouTube comments from a JSON file and save them to a text file';
-
-    private YouTubeClient $youtubeClient;
-    private string $outputDir;
-
-    public function __construct()
+    public function __construct(
+        private readonly YouTubeClient $youtubeClient = new YouTubeClient,
+        private string $outputDir = ''
+    )
     {
         parent::__construct('youtube:parse-comments');
-        $this->youtubeClient = new YouTubeClient();
-        $this->outputDir = dirname(__DIR__, 2) . '/output';
+        $this->outputDir = $outputDir ?: dirname(__DIR__, 2) . '/output';
     }
 
     protected function configure(): void

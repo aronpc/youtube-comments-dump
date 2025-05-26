@@ -3,7 +3,7 @@
   "description": "A PHP application to download YouTube comments without using API keys",
   "type": "project",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.3",
     "symfony/console": "^7.2",
     "symfony/process": "^7.2.5",
     "illuminate/support": "^12.0",

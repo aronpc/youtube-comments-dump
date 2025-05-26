@@ -3,23 +3,19 @@
 namespace App\Command;
 
 use App\Service\YouTubeClient;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'youtube:download-comments', description: 'Download comments from a YouTube video and save them to a JSON file')]
 class DownloadCommentsCommand extends Command
 {
-    protected static $defaultName = 'youtube:download-comments';
-    protected static $defaultDescription = 'Download comments from a YouTube video and save them to a JSON file';
-
-    private YouTubeClient $youtubeClient;
-
-    public function __construct()
+    public function __construct(private YouTubeClient $youtubeClient = new YouTubeClient)
     {
         parent::__construct('youtube:download-comments');
-        $this->youtubeClient = new YouTubeClient();
     }
 
     protected function configure(): void

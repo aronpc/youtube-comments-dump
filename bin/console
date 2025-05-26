@@ -12,7 +12,7 @@ $commands = [
     new App\Command\FetchCommentsCommand(),
     new App\Command\FetchLiveChatCommand(),
     new App\Command\FetchAllCommand(),
-    new App\Command\DownloadCommentsCommand(),
+//    new App\Command\DownloadCommentsCommand(),
     new App\Command\ParseCommentsCommand(),
 ];
 
