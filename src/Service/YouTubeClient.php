@@ -1,18 +1,34 @@
 <?php
 
-namespace App\Service;
+namespace AronPC\YouTubeComments\Service;
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Config;
 
 class YouTubeClient
 {
     private string $outputDir;
+    private string $youtubeDlPath;
+    private int $commandTimeout;
 
     public function __construct()
     {
-        $this->outputDir = dirname(__DIR__, 2) . '/output';
+        // Check if we're running in Laravel
+        $runningInLaravel = class_exists('\Illuminate\Foundation\Application') && app() instanceof \Illuminate\Foundation\Application;
+
+        if ($runningInLaravel) {
+            // Get settings from Laravel config
+            $this->outputDir = Config::get('youtube-comments.output_directory', dirname(__DIR__, 2) . '/output');
+            $this->youtubeDlPath = Config::get('youtube-comments.youtube_dl_path', 'yt-dlp');
+            $this->commandTimeout = Config::get('youtube-comments.command_timeout', 300);
+        } else {
+            // Use default values when running outside Laravel
+            $this->outputDir = dirname(__DIR__, 2) . '/output';
+            $this->youtubeDlPath = 'yt-dlp';
+            $this->commandTimeout = 300;
+        }
 
         // Ensure output directory exists
         if (!is_dir($this->outputDir) && !mkdir($this->outputDir, 0755, true) && !is_dir($this->outputDir)) {
@@ -89,9 +105,9 @@ class YouTubeClient
     {
         $tempJsonFile = sys_get_temp_dir() . "/{$videoId}.comments.json";
 
-        // Build the yt-dlp command
+        // Build the command using the class property
         $process = new Process([
-            'yt-dlp',
+            $this->youtubeDlPath,
             '--skip-download',
             '--write-comments',
             '--no-check-certificate',
@@ -99,7 +115,8 @@ class YouTubeClient
             "https://www.youtube.com/watch?v={$videoId}"
         ]);
 
-        $process->setTimeout(300); // 5 minutes timeout
+        // Set timeout using the class property
+        $process->setTimeout($this->commandTimeout);
 
         try {
             $process->run();
@@ -202,9 +219,9 @@ class YouTubeClient
     {
         $tempJsonFile = sys_get_temp_dir() . "/{$videoId}.livechat.json";
 
-        // Build the yt-dlp command for live chat
+        // Build the command for live chat using the class property
         $process = new Process([
-            'yt-dlp',
+            $this->youtubeDlPath,
             '--skip-download',
             '--write-subs',
             '--sub-langs', 'live_chat',
@@ -213,7 +230,8 @@ class YouTubeClient
             "https://www.youtube.com/watch?v={$videoId}"
         ]);
 
-        $process->setTimeout(300); // 5 minutes timeout
+        // Set timeout using the class property
+        $process->setTimeout($this->commandTimeout);
 
         try {
             $process->run();

@@ -1,12 +1,12 @@
 {
   "name": "aronpc/youtube-comments",
-  "description": "A PHP application to download YouTube comments without using API keys",
-  "type": "project",
+  "description": "A Laravel package to download YouTube comments without using API keys",
+  "type": "library",
   "require": {
     "php": ">=8.3",
-    "symfony/console": "^7.2",
-    "symfony/process": "^7.2.5",
     "illuminate/support": "^12.0",
+    "symfony/process": "^7.2.5",
+    "symfony/console": "^7.2",
     "vlucas/phpdotenv": "^5.6"
   },
   "require-dev": {
@@ -14,12 +14,12 @@
   },
   "autoload": {
     "psr-4": {
-      "App\\": "src/"
+      "AronPC\\YouTubeComments\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "App\\Tests\\": "tests/"
+      "AronPC\\YouTubeComments\\Tests\\": "tests/"
     }
   },
   "authors": [
@@ -31,5 +31,15 @@
   "minimum-stability": "stable",
   "scripts": {
     "test": "phpunit"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AronPC\\YouTubeComments\\YouTubeCommentsServiceProvider"
+      ],
+      "aliases": {
+        "YouTubeComments": "AronPC\\YouTubeComments\\Facades\\YouTubeComments"
+      }
+    }
   }
 }

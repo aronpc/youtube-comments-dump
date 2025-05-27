@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Command;
+namespace AronPC\YouTubeComments\Command;
 
-use App\Service\YouTubeClient;
+use AronPC\YouTubeComments\Service\YouTubeClient;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

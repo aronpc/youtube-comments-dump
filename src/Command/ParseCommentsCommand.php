@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Command;
+namespace AronPC\YouTubeComments\Command;
 
-use App\Service\YouTubeClient;
+use AronPC\YouTubeComments\Service\YouTubeClient;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Illuminate\Support\Facades\Config;
 
 #[AsCommand(name: 'youtube:parse-comments', description: 'Parse downloaded YouTube comments from a JSON file and save them to a text file')]
 class ParseCommentsCommand extends Command
@@ -19,7 +20,17 @@ class ParseCommentsCommand extends Command
     )
     {
         parent::__construct('youtube:parse-comments');
-        $this->outputDir = $outputDir ?: dirname(__DIR__, 2) . '/output';
+
+        // Check if we're running in Laravel
+        $runningInLaravel = class_exists('\Illuminate\Foundation\Application') && function_exists('app') && app() instanceof \Illuminate\Foundation\Application;
+
+        if ($runningInLaravel) {
+            // Get output directory from Laravel config
+            $this->outputDir = $outputDir ?: Config::get('youtube-comments.output_directory', dirname(__DIR__, 2) . '/output');
+        } else {
+            // Use default value when running outside Laravel
+            $this->outputDir = $outputDir ?: dirname(__DIR__, 2) . '/output';
+        }
     }
 
     protected function configure(): void
