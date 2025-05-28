@@ -12,6 +12,7 @@ class YouTubeClient
     private string $outputDir;
     private string $youtubeDlPath;
     private int $commandTimeout;
+    private ?string $cookiesPath;
 
     public function __construct()
     {
@@ -23,11 +24,13 @@ class YouTubeClient
             $this->outputDir = Config::get('youtube-comments.output_directory', dirname(__DIR__, 2) . '/output');
             $this->youtubeDlPath = Config::get('youtube-comments.youtube_dl_path', 'yt-dlp');
             $this->commandTimeout = Config::get('youtube-comments.command_timeout', 300);
+            $this->cookiesPath = Config::get('youtube-comments.cookies_path');
         } else {
             // Use default values when running outside Laravel
             $this->outputDir = dirname(__DIR__, 2) . '/output';
             $this->youtubeDlPath = 'yt-dlp';
             $this->commandTimeout = 300;
+            $this->cookiesPath = null;
         }
 
         // Ensure output directory exists
@@ -105,15 +108,26 @@ class YouTubeClient
     {
         $tempJsonFile = sys_get_temp_dir() . "/{$videoId}.comments.json";
 
-        // Build the command using the class property
-        $process = new Process([
+        $processArgs = [
             $this->youtubeDlPath,
             '--skip-download',
             '--write-comments',
             '--no-check-certificate',
-            '--output', $tempJsonFile,
+            '--output',
+            $tempJsonFile,
             "https://www.youtube.com/watch?v={$videoId}"
-        ]);
+        ];
+
+        if ($this->cookiesPath) {
+            $cookieFile = $this->cookiesPath . '/youtube-cookies.txt';
+            if (file_exists($cookieFile)) {
+                $processArgs[] = '--cookies';
+                $processArgs[] = $cookieFile;
+            }
+        }
+
+        // Build the command using the class property
+        $process = new Process($processArgs);
 
         // Set timeout using the class property
         $process->setTimeout($this->commandTimeout);
@@ -219,8 +233,7 @@ class YouTubeClient
     {
         $tempJsonFile = sys_get_temp_dir() . "/{$videoId}.livechat.json";
 
-        // Build the command for live chat using the class property
-        $process = new Process([
+        $processArgs = [
             $this->youtubeDlPath,
             '--skip-download',
             '--write-subs',
@@ -228,7 +241,18 @@ class YouTubeClient
             '--no-check-certificate',
             '--output', $tempJsonFile,
             "https://www.youtube.com/watch?v={$videoId}"
-        ]);
+        ];
+
+        if ($this->cookiesPath) {
+            $cookieFile = $this->cookiesPath . '/youtube-cookies.txt';
+            if (file_exists($cookieFile)) {
+                $processArgs[] = '--cookies';
+                $processArgs[] = $cookieFile;
+            }
+        }
+
+        // Build the command using the class property
+        $process = new Process($processArgs);
 
         // Set timeout using the class property
         $process->setTimeout($this->commandTimeout);

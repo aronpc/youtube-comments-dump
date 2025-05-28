@@ -34,4 +34,10 @@ return [
     |
     */
     'command_timeout' => env('YOUTUBE_COMMENTS_TIMEOUT', 300),
+
+    /**
+     *
+     */
+    'cookies_path' => env('YOUTUBE_COOKIES_PATH', '/shared-cookies'),
+
 ];
