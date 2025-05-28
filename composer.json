@@ -2,6 +2,7 @@
   "name": "aronpc/youtube-comments",
   "description": "A Laravel package to download YouTube comments without using API keys",
   "type": "library",
+  "license": "MIT",
   "require": {
     "php": ">=8.3",
     "illuminate/support": "^12.0",
