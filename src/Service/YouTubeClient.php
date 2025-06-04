@@ -16,8 +16,12 @@ class YouTubeClient
 
     public function __construct()
     {
-        // Check if we're running in Laravel
-        $runningInLaravel = class_exists('\Illuminate\Foundation\Application') && app() instanceof \Illuminate\Foundation\Application;
+        // Check if we're running in Laravel. The `app()` helper may not be
+        // defined when the package is used outside a Laravel environment, so
+        // verify the function exists before invoking it.
+        $runningInLaravel = class_exists('\Illuminate\Foundation\Application')
+            && function_exists('app')
+            && app() instanceof \Illuminate\Foundation\Application;
 
         if ($runningInLaravel) {
             // Get settings from Laravel config
